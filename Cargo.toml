@@ -1,0 +1,21 @@
+[package]
+name = "keyboard-cursor"
+description = "Control the mouse cursor using the keyboard"
+license = "MIT"
+repository = "https://github.com/FrederikNorlyk/rust-keyboard-cursor"
+categories = ["config"]
+version = "1.0.0"
+edition = "2024"
+
+[lints.clippy]
+all = "deny"           # Fail the build instead of warn
+pedantic = "deny"      # Pedantic lints also fail
+correctness = "deny"   # Correctness issues
+complexity = "deny"    # Overly complex code
+perf = "deny"          # Performance anti-patterns
+style = "deny"         # Style issues
+suspicious = "deny"    # Suspicious patterns
+
+[lints.rust]
+unsafe_code = "deny"
+unused = "deny"
