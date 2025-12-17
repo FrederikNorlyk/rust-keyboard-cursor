@@ -22,7 +22,5 @@ unused = "deny"
 
 [dependencies]
 egui = "0.33.3"
-egui-wgpu = "0.33.3"
-egui-winit = "0.33.3"
-winit = "0.30.12"
 eframe = { version = "0.33.3", default-features = true }
+enigo = "0.6.1"
