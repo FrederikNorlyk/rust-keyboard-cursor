@@ -1,7 +1,6 @@
 #![windows_subsystem = "windows"]
 
-use crate::ui::grid_app::GridApp;
-use eframe::egui;
+use crate::ui::app::App;
 
 mod ui;
 
@@ -34,6 +33,9 @@ fn main() -> eframe::Result {
         ..Default::default()
     };
 
-    let app = GridApp::new();
-    eframe::run_native(app_id, native_options, Box::new(|_| Ok(Box::new(app))))
+    eframe::run_native(
+        app_id,
+        native_options,
+        Box::new(|_| Ok(Box::new(App::new()))),
+    )
 }

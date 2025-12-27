@@ -1,11 +1,26 @@
-use crate::ui::grid_app::GridApp;
+use crate::ui::renderer::KeyResult::Await;
+use crate::ui::renderer::{KeyResult, Renderer};
 use eframe::emath::{Align2, Pos2, Rect, Vec2};
 use eframe::epaint::{Color32, Stroke};
-use egui::Frame;
+use egui::{Context, Frame, Key};
+use std::collections::HashMap;
+
+const NUMBER_KEYS: &[Key] = &[
+    Key::Num1,
+    Key::Num2,
+    Key::Num3,
+    Key::Num4,
+    Key::Num5,
+    Key::Num6,
+    Key::Num7,
+    Key::Num8,
+    Key::Num9,
+];
 
 pub struct SubGrid {
     outer_rect: Rect,
     cell_size: Vec2,
+    label_positions: HashMap<String, Pos2>,
 }
 
 impl SubGrid {
@@ -16,10 +31,13 @@ impl SubGrid {
         Self {
             outer_rect: Rect::from_center_size(center_position, outer_cell_size),
             cell_size: Vec2::new(inner_width, inner_height),
+            label_positions: HashMap::new(),
         }
     }
+}
 
-    pub fn render(&self, app: &mut GridApp, ctx: &egui::Context) {
+impl Renderer for SubGrid {
+    fn render(&mut self, ctx: &Context) {
         egui::CentralPanel::default()
             .frame(Frame::NONE)
             .show(ctx, |ui| {
@@ -52,10 +70,31 @@ impl SubGrid {
                             Color32::WHITE,
                         );
 
-                        app.add_position(format!("{i}"), rect.center());
+                        self.label_positions.insert(format!("{i}"), rect.center());
                         i += 1;
                     }
                 }
             });
+    }
+
+    fn get_label_position(&self, label: String) -> Option<&Pos2> {
+        self.label_positions.get(&label)
+    }
+
+    fn await_key(&mut self, ctx: &Context) -> Result<KeyResult, String> {
+        for key in NUMBER_KEYS {
+            if ctx.input(|i| i.key_pressed(*key)) {
+                println!("Key pressed: {}", key.name());
+
+                if let Some(&position) = self.label_positions.get(&key.name().to_string()) {
+                    return Ok(KeyResult::Click { position });
+                } else {
+                    println!("Invalid key");
+                }
+                break;
+            }
+        }
+
+        Ok(Await)
     }
 }

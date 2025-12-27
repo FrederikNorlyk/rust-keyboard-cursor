@@ -1,12 +1,57 @@
-use crate::ui::grid_app::GridApp;
+use crate::ui::renderer::{KeyResult, Renderer};
+use crate::ui::sub_grid::SubGrid;
 use eframe::emath::{Align2, Pos2, Rect, Vec2};
 use eframe::epaint::{Color32, Stroke};
-use egui::Frame;
+use egui::{Context, Frame, Key};
+use std::collections::HashMap;
 
-pub struct MainGrid;
+const HOTKEYS: &[Key] = &[
+    Key::A,
+    Key::B,
+    Key::C,
+    Key::D,
+    Key::E,
+    Key::F,
+    Key::G,
+    Key::H,
+    Key::I,
+    Key::J,
+    Key::K,
+    Key::L,
+    Key::M,
+    Key::N,
+    Key::O,
+    Key::P,
+    Key::Q,
+    Key::R,
+    Key::S,
+    Key::T,
+    Key::U,
+    Key::V,
+    Key::W,
+    Key::X,
+    Key::Y,
+    Key::Z,
+];
+
+pub struct MainGrid {
+    label_positions: HashMap<String, Pos2>,
+    cell_size: Option<Vec2>,
+    first_key: Option<Key>,
+}
 
 impl MainGrid {
-    pub fn render(app: &mut GridApp, ctx: &egui::Context) {
+    pub fn new() -> MainGrid {
+        MainGrid {
+            label_positions: HashMap::new(),
+            cell_size: None,
+            first_key: None,
+        }
+    }
+}
+
+impl Renderer for MainGrid {
+    fn render(&mut self, ctx: &Context) {
         egui::CentralPanel::default()
             .frame(Frame::NONE)
             .show(ctx, |ui| {
@@ -21,7 +66,7 @@ impl MainGrid {
                 let cell_height = screen_size.y / rows as f32;
                 let cell_size = Vec2::new(cell_width, cell_height);
 
-                app.set_cell_size(cell_size);
+                self.cell_size = Some(cell_size);
 
                 let painter = ui.painter_at(Rect::from_min_size(top_left, screen_size));
 
@@ -43,7 +88,7 @@ impl MainGrid {
 
                         let label = index_to_label(id);
 
-                        app.add_position(label.clone(), rect.center());
+                        self.label_positions.insert(label.clone(), rect.center());
 
                         painter.text(
                             Pos2::new(rect.center().x - 2_f32, rect.center().y - 2_f32),
@@ -64,6 +109,45 @@ impl MainGrid {
                     }
                 }
             });
+    }
+
+    fn get_label_position(&self, label: String) -> Option<&Pos2> {
+        self.label_positions.get(&label)
+    }
+
+    fn await_key(&mut self, ctx: &Context) -> Result<KeyResult, String> {
+        for key in HOTKEYS {
+            if !ctx.input(|i| i.key_pressed(*key)) {
+                continue;
+            }
+
+            let pressed_key = key.name();
+
+            let Some(first_key) = self.first_key else {
+                println!("First key pressed: {pressed_key}");
+                self.first_key = Some(*key);
+                break;
+            };
+
+            let key_combo = format!("{}{}", first_key.name(), pressed_key);
+            println!("Key combo: {key_combo}");
+
+            if let Some(&position) = self.get_label_position(key_combo)
+                && let Some(cell_size) = self.cell_size
+            {
+                return Ok(KeyResult::SetRenderer {
+                    renderer: Box::new(SubGrid::new(position, cell_size)),
+                    mouse_position: position,
+                });
+            } else {
+                // TODO: Reset the first_key?
+                println!("Invalid key combo");
+            }
+
+            break;
+        }
+
+        Ok(KeyResult::Await)
     }
 }
 
