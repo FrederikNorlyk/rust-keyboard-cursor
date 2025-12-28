@@ -16,6 +16,10 @@ perf = "deny"          # Performance anti-patterns
 style = "deny"         # Style issues
 suspicious = "deny"    # Suspicious patterns
 
+# This project deals with such small numerics (pixels from screensize, so I'm not worried about these)
+cast_possible_truncation = { level = "allow", priority = 2 }
+cast_precision_loss = { level = "allow", priority = 2 }
+
 [lints.rust]
 unsafe_code = "deny"
 unused = "deny"

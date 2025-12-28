@@ -60,10 +60,12 @@ impl Renderer for MainGrid {
 
                 // Decide grid size: target cell size ~80x80, but fit evenly
                 let target_cell_size = 80.0_f32;
-                let cols = (screen_size.x / target_cell_size).floor().max(1.0) as usize;
-                let rows = (screen_size.y / target_cell_size).floor().max(1.0) as usize;
-                let cell_width = screen_size.x / cols as f32;
-                let cell_height = screen_size.y / rows as f32;
+                #[allow(clippy::cast_sign_loss)]
+                let cols = (screen_size.x / target_cell_size).floor().max(1.0) as u8;
+                #[allow(clippy::cast_sign_loss)]
+                let rows = (screen_size.y / target_cell_size).floor().max(1.0) as u8;
+                let cell_width = screen_size.x / f32::from(cols);
+                let cell_height = screen_size.y / f32::from(rows);
                 let cell_size = Vec2::new(cell_width, cell_height);
 
                 self.cell_size = Some(cell_size);
@@ -79,8 +81,8 @@ impl Renderer for MainGrid {
 
                 for row in 0..rows {
                     for column in 0..cols {
-                        let x = top_left.x + column as f32 * cell_width;
-                        let y = top_left.y + row as f32 * cell_height;
+                        let x = top_left.x + f32::from(column) * cell_width;
+                        let y = top_left.y + f32::from(row) * cell_height;
 
                         let rect = Rect::from_min_size(Pos2::new(x, y), cell_size);
 
@@ -139,10 +141,10 @@ impl Renderer for MainGrid {
                     renderer: Box::new(SubGrid::new(position, cell_size)),
                     mouse_position: position,
                 });
-            } else {
-                // TODO: Reset the first_key?
-                println!("Invalid key combo");
             }
+
+            // TODO: Reset the first_key?
+            println!("Invalid key combo");
 
             break;
         }

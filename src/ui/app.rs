@@ -68,7 +68,7 @@ impl eframe::App for App {
                 mouse_position,
             }) => {
                 self.renderer = renderer;
-                self.move_mouse_to(mouse_position)
+                self.move_mouse_to(mouse_position);
             }
             Ok(KeyResult::Click { position }) => {
                 self.move_mouse_to(position);

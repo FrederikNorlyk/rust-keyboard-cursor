@@ -86,11 +86,11 @@ impl Renderer for SubGrid {
             if ctx.input(|i| i.key_pressed(*key)) {
                 println!("Key pressed: {}", key.name());
 
-                if let Some(&position) = self.label_positions.get(&key.name().to_string()) {
+                if let Some(&position) = self.label_positions.get(key.name()) {
                     return Ok(KeyResult::Click { position });
-                } else {
-                    println!("Invalid key");
                 }
+
+                println!("Invalid key");
                 break;
             }
         }
