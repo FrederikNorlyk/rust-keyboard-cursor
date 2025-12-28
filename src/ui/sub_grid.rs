@@ -1,6 +1,7 @@
 use crate::ui::renderer::KeyResult::Await;
 use crate::ui::renderer::{KeyResult, Renderer};
-use eframe::emath::{Align2, Pos2, Rect, Vec2};
+use crate::ui::text::Text;
+use eframe::emath::{Pos2, Rect, Vec2};
 use eframe::epaint::{Color32, Stroke};
 use egui::{Context, Frame, Key};
 use std::collections::HashMap;
@@ -53,6 +54,8 @@ impl Renderer for SubGrid {
 
                 let mut i = 1;
 
+                let text_size = (self.cell_size.y * 0.6).clamp(10.0, 48.0);
+
                 for column in 0..3 {
                     for row in 0..3 {
                         let x = outer_x + (self.cell_size.x * row as f32);
@@ -60,15 +63,11 @@ impl Renderer for SubGrid {
 
                         let rect = Rect::from_min_size(Pos2::new(x, y), self.cell_size);
 
-                        painter.rect_stroke(rect, 0.0, stroke, egui::StrokeKind::Inside);
+                        if i % 2 == 0 {
+                            painter.rect_stroke(rect, 0.0, stroke, egui::StrokeKind::Inside);
+                        }
 
-                        painter.text(
-                            rect.center(),
-                            Align2::CENTER_CENTER,
-                            i,
-                            egui::FontId::proportional((self.cell_size.y * 0.35).clamp(10.0, 48.0)),
-                            Color32::WHITE,
-                        );
+                        Text::draw(&painter, rect.center(), &i, text_size);
 
                         self.label_positions.insert(format!("{i}"), rect.center());
                         i += 1;

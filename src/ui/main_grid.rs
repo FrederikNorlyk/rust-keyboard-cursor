@@ -1,8 +1,9 @@
 use crate::ui::renderer::{KeyResult, Renderer};
 use crate::ui::sub_grid::SubGrid;
-use eframe::emath::{Align2, Pos2, Rect, Vec2};
+use crate::ui::text::Text;
+use eframe::emath::{Pos2, Rect, Vec2};
 use eframe::epaint::{Color32, Stroke};
-use egui::{Context, Frame, Key};
+use egui::{Context, Frame, Key, Painter};
 use std::collections::HashMap;
 
 const HOTKEYS: &[Key] = &[
@@ -70,7 +71,7 @@ impl Renderer for MainGrid {
 
                 self.cell_size = Some(cell_size);
 
-                let painter = ui.painter_at(Rect::from_min_size(top_left, screen_size));
+                let painter: Painter = ui.painter_at(Rect::from_min_size(top_left, screen_size));
 
                 let stroke = Stroke {
                     width: 0.3,
@@ -78,6 +79,7 @@ impl Renderer for MainGrid {
                 };
 
                 let mut id = 0_usize;
+                let text_size = (cell_height * 0.35).clamp(10.0, 48.0);
 
                 for row in 0..rows {
                     for column in 0..cols {
@@ -92,20 +94,7 @@ impl Renderer for MainGrid {
 
                         self.label_positions.insert(label.clone(), rect.center());
 
-                        painter.text(
-                            Pos2::new(rect.center().x - 2_f32, rect.center().y - 2_f32),
-                            Align2::CENTER_CENTER,
-                            &label,
-                            egui::FontId::proportional((cell_height * 0.35).clamp(10.0, 48.0)),
-                            Color32::BLACK,
-                        );
-                        painter.text(
-                            rect.center(),
-                            Align2::CENTER_CENTER,
-                            label,
-                            egui::FontId::proportional((cell_height * 0.35).clamp(10.0, 48.0)),
-                            Color32::WHITE,
-                        );
+                        Text::draw(&painter, rect.center(), &label, text_size);
 
                         id = id.saturating_add(1);
                     }
