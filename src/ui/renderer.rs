@@ -6,9 +6,20 @@ pub enum KeyResult {
         renderer: Box<dyn Renderer>,
         mouse_position: Pos2,
     },
-    Click {
+    MoveAndClick {
         position: Pos2,
     },
+    Move {
+        direction: Direction,
+    },
+    Click,
+}
+
+pub enum Direction {
+    Up,
+    Down,
+    Left,
+    Right,
 }
 
 pub trait Renderer {

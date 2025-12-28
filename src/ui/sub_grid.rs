@@ -1,5 +1,5 @@
 use crate::ui::renderer::KeyResult::Await;
-use crate::ui::renderer::{KeyResult, Renderer};
+use crate::ui::renderer::{Direction, KeyResult, Renderer};
 use crate::ui::text::Text;
 use eframe::emath::{Pos2, Rect, Vec2};
 use eframe::epaint::{Color32, Stroke};
@@ -86,12 +86,35 @@ impl Renderer for SubGrid {
                 println!("Key pressed: {}", key.name());
 
                 if let Some(&position) = self.label_positions.get(key.name()) {
-                    return Ok(KeyResult::Click { position });
+                    return Ok(KeyResult::MoveAndClick { position });
                 }
 
                 println!("Invalid key");
                 break;
             }
+        }
+
+        // TODO: Mouse speed (Key::Shift to speed up?)
+        // TODO: Move mouse with arrow keys too
+        // TODO: Change usage of key_pressed to key_released where you don't hold down the key
+        if ctx.input(|i| i.key_pressed(Key::Space)) {
+            return Ok(KeyResult::Click);
+        } else if ctx.input(|i| i.key_pressed(Key::H)) {
+            return Ok(KeyResult::Move {
+                direction: Direction::Left,
+            });
+        } else if ctx.input(|i| i.key_pressed(Key::J)) {
+            return Ok(KeyResult::Move {
+                direction: Direction::Down,
+            });
+        } else if ctx.input(|i| i.key_pressed(Key::K)) {
+            return Ok(KeyResult::Move {
+                direction: Direction::Up,
+            });
+        } else if ctx.input(|i| i.key_pressed(Key::L)) {
+            return Ok(KeyResult::Move {
+                direction: Direction::Right,
+            });
         }
 
         Ok(Await)

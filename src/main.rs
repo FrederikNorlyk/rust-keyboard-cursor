@@ -1,11 +1,11 @@
 #![windows_subsystem = "windows"]
 
 use crate::ui::main_grid::MainGrid;
-use crate::ui::renderer::{KeyResult, Renderer};
+use crate::ui::renderer::{Direction, KeyResult, Renderer};
 use eframe::egui;
 use egui::{Key, Pos2};
-use enigo::Coordinate::Abs;
-use enigo::{Button, Direction, Mouse, Settings};
+use enigo::Coordinate::{Abs, Rel};
+use enigo::{Button, Mouse, Settings};
 
 mod ui;
 
@@ -74,7 +74,7 @@ impl App {
     fn click_mouse(&mut self) {
         println!("Clicking..");
         self.enigo
-            .button(Button::Left, Direction::Click)
+            .button(Button::Left, enigo::Direction::Click)
             .expect("Failed to click");
     }
 }
@@ -104,16 +104,32 @@ impl eframe::App for App {
         match self.renderer.await_key(ctx) {
             Ok(KeyResult::Await) => {}
             Ok(KeyResult::SetRenderer {
-                   renderer,
-                   mouse_position,
-               }) => {
+                renderer,
+                mouse_position,
+            }) => {
                 self.renderer = renderer;
                 self.move_mouse_to(mouse_position);
             }
-            Ok(KeyResult::Click { position }) => {
+            Ok(KeyResult::MoveAndClick { position }) => {
                 self.move_mouse_to(position);
                 ctx.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
                 self.should_click = true;
+            }
+            Ok(KeyResult::Click) => {
+                ctx.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
+                self.should_click = true;
+            }
+            Ok(KeyResult::Move { direction }) => {
+                let (dx, dy) = match direction {
+                    Direction::Up => (0, -1),
+                    Direction::Down => (0, 1),
+                    Direction::Left => (-1, 0),
+                    Direction::Right => (1, 0),
+                };
+
+                self.enigo
+                    .move_mouse(dx, dy, Rel)
+                    .expect("Failed to move mouse relatively");
             }
             Err(e) => {
                 eprintln!("Key handler error: {e}");
