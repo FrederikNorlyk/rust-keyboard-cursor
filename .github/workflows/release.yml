@@ -13,7 +13,18 @@ permissions:
 jobs:
   build-release:
     name: Build Release
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        include:
+          - os: ubuntu-latest
+            artifact_name: keyboard-cursor
+            asset_name: keyboard-cursor-linux
+          - os: windows-latest
+            artifact_name: keyboard-cursor.exe
+            asset_name: keyboard-cursor-windows.exe
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
@@ -24,9 +35,8 @@ jobs:
         run: cargo build --release
 
       - name: Upload Binaries
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          files: |
-            ./target/release
+          files: target/release/${{ matrix.artifact_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
