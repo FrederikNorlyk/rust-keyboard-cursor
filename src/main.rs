@@ -119,12 +119,12 @@ impl eframe::App for App {
                 ctx.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
                 self.should_click = true;
             }
-            Ok(KeyResult::Move { direction }) => {
+            Ok(KeyResult::Move { direction, speed }) => {
                 let (dx, dy) = match direction {
-                    Direction::Up => (0, -1),
-                    Direction::Down => (0, 1),
-                    Direction::Left => (-1, 0),
-                    Direction::Right => (1, 0),
+                    Direction::Up => (0, -speed),
+                    Direction::Down => (0, speed),
+                    Direction::Left => (-speed, 0),
+                    Direction::Right => (speed, 0),
                 };
 
                 self.enigo

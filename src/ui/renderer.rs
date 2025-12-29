@@ -11,6 +11,7 @@ pub enum KeyResult {
     },
     Move {
         direction: Direction,
+        speed: i32,
     },
     Click,
 }

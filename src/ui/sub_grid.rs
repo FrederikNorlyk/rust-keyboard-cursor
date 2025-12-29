@@ -3,7 +3,7 @@ use crate::ui::renderer::{Direction, KeyResult, Renderer};
 use crate::ui::text::Text;
 use eframe::emath::{Pos2, Rect, Vec2};
 use eframe::epaint::{Color32, Stroke};
-use egui::{Context, Frame, Key};
+use egui::{Context, Frame, InputState, Key};
 use std::collections::HashMap;
 
 const NUMBER_KEYS: &[Key] = &[
@@ -17,6 +17,11 @@ const NUMBER_KEYS: &[Key] = &[
     Key::Num8,
     Key::Num9,
 ];
+
+const MOVE_LEFT_KEYS: &[Key] = &[Key::ArrowLeft, Key::H];
+const MOVE_UP_KEYS: &[Key] = &[Key::ArrowUp, Key::K];
+const MOVE_DOWN_KEYS: &[Key] = &[Key::ArrowDown, Key::J];
+const MOVE_RIGHT_KEYS: &[Key] = &[Key::ArrowRight, Key::L];
 
 pub struct SubGrid {
     outer_rect: Rect,
@@ -81,8 +86,10 @@ impl Renderer for SubGrid {
     }
 
     fn await_key(&mut self, ctx: &Context) -> Result<KeyResult, String> {
+        let input = ctx.input(Clone::clone);
+
         for key in NUMBER_KEYS {
-            if ctx.input(|i| i.key_pressed(*key)) {
+            if input.key_pressed(*key) {
                 println!("Key pressed: {}", key.name());
 
                 if let Some(&position) = self.label_positions.get(key.name()) {
@@ -94,29 +101,51 @@ impl Renderer for SubGrid {
             }
         }
 
-        // TODO: Mouse speed (Key::Shift to speed up?)
-        // TODO: Move mouse with arrow keys too
         // TODO: Change usage of key_pressed to key_released where you don't hold down the key
-        if ctx.input(|i| i.key_pressed(Key::Space)) {
+        if input.key_pressed(Key::Space) {
             return Ok(KeyResult::Click);
-        } else if ctx.input(|i| i.key_pressed(Key::H)) {
-            return Ok(KeyResult::Move {
-                direction: Direction::Left,
-            });
-        } else if ctx.input(|i| i.key_pressed(Key::J)) {
-            return Ok(KeyResult::Move {
-                direction: Direction::Down,
-            });
-        } else if ctx.input(|i| i.key_pressed(Key::K)) {
-            return Ok(KeyResult::Move {
-                direction: Direction::Up,
-            });
-        } else if ctx.input(|i| i.key_pressed(Key::L)) {
-            return Ok(KeyResult::Move {
-                direction: Direction::Right,
-            });
+        }
+
+        for key in MOVE_LEFT_KEYS {
+            if input.key_pressed(*key) {
+                return Ok(KeyResult::Move {
+                    direction: Direction::Left,
+                    speed: get_speed(&input),
+                });
+            }
+        }
+
+        for key in MOVE_UP_KEYS {
+            if input.key_pressed(*key) {
+                return Ok(KeyResult::Move {
+                    direction: Direction::Up,
+                    speed: get_speed(&input),
+                });
+            }
+        }
+
+        for key in MOVE_DOWN_KEYS {
+            if input.key_pressed(*key) {
+                return Ok(KeyResult::Move {
+                    direction: Direction::Down,
+                    speed: get_speed(&input),
+                });
+            }
+        }
+
+        for key in MOVE_RIGHT_KEYS {
+            if input.key_pressed(*key) {
+                return Ok(KeyResult::Move {
+                    direction: Direction::Right,
+                    speed: get_speed(&input),
+                });
+            }
         }
 
         Ok(Await)
     }
+}
+
+fn get_speed(input_state: &InputState) -> i32 {
+    if input_state.modifiers.shift { 20 } else { 5 }
 }
