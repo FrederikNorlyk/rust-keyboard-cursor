@@ -1,6 +1,10 @@
 # Rust Keyboard Cursor
 A lightweight utility written in Rust that lets you precisely control the mouse cursor using only the keyboard. It’s designed for fast, accurate mouse positioning without reaching for a physical mouse.
 
+## Installation
+
+Download the executable from the [Releases](https://github.com/FrederikNorlyk/rust-keyboard-cursor/releases) page.
+
 ## Usage
 
 It’s recommended to launch the executable via your preferred macro or hotkey program (for example, **AutoHotkey** or **Microsoft PowerToys**).
