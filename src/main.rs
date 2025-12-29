@@ -94,7 +94,7 @@ impl eframe::App for App {
             return;
         }
 
-        if ctx.input(|i| i.key_pressed(Key::Escape)) {
+        if ctx.input(|i| i.key_released(Key::Escape)) {
             println!("Escape clicked");
             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
             self.is_closing = true;

@@ -92,7 +92,7 @@ impl Renderer for SubGrid {
         let input = ctx.input(Clone::clone);
 
         for key in NUMBER_KEYS {
-            if input.key_pressed(*key) {
+            if input.key_released(*key) {
                 println!("Key pressed: {}", key.name());
 
                 if let Some(&position) = self.label_positions.get(key.name()) {
@@ -104,8 +104,7 @@ impl Renderer for SubGrid {
             }
         }
 
-        // TODO: Change usage of key_pressed to key_released where you don't hold down the key
-        if input.key_pressed(Key::Space) {
+        if input.key_released(Key::Space) {
             return Ok(KeyResult::Click);
         }
 

@@ -108,7 +108,7 @@ impl Renderer for MainGrid {
 
     fn await_key(&mut self, ctx: &Context) -> Result<KeyResult, String> {
         for key in HOTKEYS {
-            if !ctx.input(|i| i.key_pressed(*key)) {
+            if !ctx.input(|i| i.key_released(*key)) {
                 continue;
             }
 
