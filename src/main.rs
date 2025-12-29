@@ -125,6 +125,10 @@ impl eframe::App for App {
                     Direction::Down => (0, speed),
                     Direction::Left => (-speed, 0),
                     Direction::Right => (speed, 0),
+                    Direction::LeftUp => (-speed, -speed),
+                    Direction::LeftDown => (-speed, speed),
+                    Direction::RightUp => (speed, -speed),
+                    Direction::RightDown => (speed, speed),
                 };
 
                 self.enigo

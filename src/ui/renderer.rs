@@ -21,6 +21,10 @@ pub enum Direction {
     Down,
     Left,
     Right,
+    LeftUp,
+    RightUp,
+    LeftDown,
+    RightDown
 }
 
 pub trait Renderer {

@@ -23,6 +23,9 @@ const MOVE_UP_KEYS: &[Key] = &[Key::ArrowUp, Key::K];
 const MOVE_DOWN_KEYS: &[Key] = &[Key::ArrowDown, Key::J];
 const MOVE_RIGHT_KEYS: &[Key] = &[Key::ArrowRight, Key::L];
 
+const DEFAULT_MOUSE_SPEED: i32 = 1;
+const FAST_MOUSE_SPEED: i32 = 10;
+
 pub struct SubGrid {
     outer_rect: Rect,
     cell_size: Vec2,
@@ -106,40 +109,77 @@ impl Renderer for SubGrid {
             return Ok(KeyResult::Click);
         }
 
+        let mut move_left = false;
+        let mut move_up = false;
+        let mut move_right = false;
+        let mut move_down = false;
+
         for key in MOVE_LEFT_KEYS {
-            if input.key_pressed(*key) {
-                return Ok(KeyResult::Move {
-                    direction: Direction::Left,
-                    speed: get_speed(&input),
-                });
+            if input.key_down(*key) {
+                move_left = true;
             }
         }
 
         for key in MOVE_UP_KEYS {
-            if input.key_pressed(*key) {
-                return Ok(KeyResult::Move {
-                    direction: Direction::Up,
-                    speed: get_speed(&input),
-                });
+            if input.key_down(*key) {
+                move_up = true;
             }
         }
 
         for key in MOVE_DOWN_KEYS {
-            if input.key_pressed(*key) {
-                return Ok(KeyResult::Move {
-                    direction: Direction::Down,
-                    speed: get_speed(&input),
-                });
+            if input.key_down(*key) {
+                move_down = true;
             }
         }
 
         for key in MOVE_RIGHT_KEYS {
-            if input.key_pressed(*key) {
-                return Ok(KeyResult::Move {
-                    direction: Direction::Right,
-                    speed: get_speed(&input),
-                });
+            if input.key_down(*key) {
+                move_right = true;
             }
+        }
+
+        let speed = get_speed(&input);
+
+        if move_left && move_up {
+            return Ok(KeyResult::Move {
+                direction: Direction::LeftUp,
+                speed,
+            });
+        } else if move_up && move_right {
+            return Ok(KeyResult::Move {
+                direction: Direction::RightUp,
+                speed,
+            });
+        } else if move_up {
+            return Ok(KeyResult::Move {
+                direction: Direction::Up,
+                speed,
+            });
+        } else if move_right && move_down {
+            return Ok(KeyResult::Move {
+                direction: Direction::RightDown,
+                speed,
+            });
+        } else if move_right {
+            return Ok(KeyResult::Move {
+                direction: Direction::Right,
+                speed,
+            });
+        } else if move_down && move_left {
+            return Ok(KeyResult::Move {
+                direction: Direction::LeftDown,
+                speed,
+            });
+        } else if move_down {
+            return Ok(KeyResult::Move {
+                direction: Direction::Down,
+                speed,
+            });
+        } else if move_left {
+            return Ok(KeyResult::Move {
+                direction: Direction::Left,
+                speed,
+            });
         }
 
         Ok(Await)
@@ -147,5 +187,9 @@ impl Renderer for SubGrid {
 }
 
 fn get_speed(input_state: &InputState) -> i32 {
-    if input_state.modifiers.shift { 20 } else { 5 }
+    if input_state.modifiers.shift {
+        FAST_MOUSE_SPEED
+    } else {
+        DEFAULT_MOUSE_SPEED
+    }
 }
