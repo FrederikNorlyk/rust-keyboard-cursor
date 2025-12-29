@@ -23,7 +23,7 @@ When launched, a full-screen grid is rendered. Each cell is labeled with a two-l
 
 Pressing one of these key combinations instantly moves the mouse cursor to the center of the selected grid cell and transitions to the second stage.
 
-<img src="screenshot.jpg" alt="Screenshot main grid">
+<img src="screenshot-01.jpg" alt="Screenshot main grid">
 
 ### Sub Grid
 A smaller 3×3 grid appears inside the selected area, labeled with the numbers `1` through `9`.
