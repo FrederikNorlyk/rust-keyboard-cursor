@@ -1,6 +1,13 @@
 # Rust Keyboard Cursor
 A lightweight utility written in Rust that lets you precisely control the mouse cursor using only the keyboard. It’s designed for fast, accurate mouse positioning without reaching for a physical mouse.
 
+## Tech Stack
+
+- **Rust** - core language
+- **egui** - immediate-mode GUI
+- **eframe** - application framework for egui
+- **enigo** - cross-platform input simulation
+
 ## Installation
 
 Download the executable from the [Releases](https://github.com/FrederikNorlyk/rust-keyboard-cursor/releases) page.
