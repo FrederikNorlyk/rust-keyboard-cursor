@@ -10,10 +10,15 @@ use enigo::{Button, Mouse, Settings};
 mod ui;
 
 fn is_hyprland() -> bool {
-    std::env::var("HYPRLAND_INSTANCE_SIGNATURE").is_ok()
-        || std::env::var("XDG_CURRENT_DESKTOP")
-            .map(|v| v.to_lowercase() == "hyprland")
-            .unwrap_or(false)
+    let hyprland = std::env::var("HYPRLAND_INSTANCE_SIGNATURE");
+
+    if hyprland.is_ok() {
+        return true;
+    }
+
+    let xdg = std::env::var("XDG_CURRENT_DESKTOP");
+
+    xdg.map(|v| v.to_lowercase() == "hyprland").unwrap_or(false)
 }
 
 fn main() -> eframe::Result {
