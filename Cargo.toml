@@ -27,4 +27,4 @@ unused = "deny"
 [dependencies]
 egui = "0.33.3"
 eframe = { version = "0.33.3", default-features = true }
-enigo = { version = "0.6.1", features = ["wayland"] }
+enigo = "0.6.1"
