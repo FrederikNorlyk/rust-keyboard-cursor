@@ -3,7 +3,7 @@ use crate::ui::sub_grid::SubGrid;
 use crate::ui::text::Text;
 use eframe::emath::{Pos2, Rect, Vec2};
 use eframe::epaint::{Color32, Stroke};
-use egui::{Context, Frame, Key, Painter};
+use egui::{Frame, Key, Painter, Ui};
 use std::collections::HashMap;
 
 const HOTKEYS: &[Key] = &[
@@ -52,10 +52,10 @@ impl MainGrid {
 }
 
 impl Renderer for MainGrid {
-    fn render(&mut self, ctx: &Context) {
+    fn render(&mut self, ui: &mut Ui) {
         egui::CentralPanel::default()
             .frame(Frame::NONE)
-            .show(ctx, |ui| {
+            .show_inside(ui, |ui| {
                 let screen_size = ui.available_size();
                 let top_left = ui.min_rect().min;
 
@@ -106,9 +106,9 @@ impl Renderer for MainGrid {
         self.label_positions.get(&label)
     }
 
-    fn await_key(&mut self, ctx: &Context) -> Result<KeyResult, String> {
+    fn await_key(&mut self, ui: &Ui) -> Result<KeyResult, String> {
         for key in HOTKEYS {
-            if !ctx.input(|i| i.key_released(*key)) {
+            if !ui.input(|i| i.key_released(*key)) {
                 continue;
             }
 
