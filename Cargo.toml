@@ -4,7 +4,7 @@ description = "Control the mouse cursor using the keyboard"
 license = "MIT"
 repository = "https://github.com/FrederikNorlyk/rust-keyboard-cursor"
 categories = ["config"]
-version = "1.2.0"
+version = "1.2.1"
 edition = "2024"
 
 [lints.clippy]
