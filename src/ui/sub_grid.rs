@@ -3,7 +3,7 @@ use crate::ui::renderer::{Direction, KeyResult, Renderer};
 use crate::ui::text::Text;
 use eframe::emath::{Pos2, Rect, Vec2};
 use eframe::epaint::{Color32, Stroke};
-use egui::{Context, Frame, InputState, Key};
+use egui::{Frame, InputState, Key, Ui};
 use std::collections::HashMap;
 
 const NUMBER_KEYS: &[Key] = &[
@@ -46,10 +46,10 @@ impl SubGrid {
 }
 
 impl Renderer for SubGrid {
-    fn render(&mut self, ctx: &Context) {
+    fn render(&mut self, ui: &mut Ui) {
         egui::CentralPanel::default()
             .frame(Frame::NONE)
-            .show(ctx, |ui| {
+            .show_inside(ui, |ui| {
                 let painter = ui.painter_at(self.outer_rect);
 
                 let stroke = Stroke {
@@ -88,8 +88,8 @@ impl Renderer for SubGrid {
         self.label_positions.get(&label)
     }
 
-    fn await_key(&mut self, ctx: &Context) -> Result<KeyResult, String> {
-        let input = ctx.input(Clone::clone);
+    fn await_key(&mut self, ui: &Ui) -> Result<KeyResult, String> {
+        let input = ui.input(Clone::clone);
 
         for key in NUMBER_KEYS {
             if input.key_released(*key) {

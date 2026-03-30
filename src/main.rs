@@ -2,8 +2,8 @@
 
 use crate::ui::main_grid::MainGrid;
 use crate::ui::renderer::{Direction, KeyResult, Renderer};
-use eframe::egui;
-use egui::{Key, Pos2};
+use eframe::{egui, Frame};
+use egui::{Key, Pos2, Ui};
 use enigo::Coordinate::{Abs, Rel};
 use enigo::{Button, Mouse, Settings};
 
@@ -85,7 +85,7 @@ impl App {
 }
 
 impl eframe::App for App {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn ui(&mut self, ui: &mut Ui, _frame: &mut Frame) {
         if self.is_closing {
             println!("Is closing");
             return;
@@ -94,19 +94,19 @@ impl eframe::App for App {
         if self.should_click {
             println!("Should click");
             self.click_mouse();
-            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+            ui.send_viewport_cmd(egui::ViewportCommand::Close);
             self.is_closing = true;
             return;
         }
 
-        if ctx.input(|i| i.key_released(Key::Escape)) {
+        if ui.input(|i| i.key_released(Key::Escape)) {
             println!("Escape clicked");
-            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+            ui.send_viewport_cmd(egui::ViewportCommand::Close);
             self.is_closing = true;
             return;
         }
 
-        match self.renderer.await_key(ctx) {
+        match self.renderer.await_key(ui) {
             Ok(KeyResult::Await) => {}
             Ok(KeyResult::SetRenderer {
                 renderer,
@@ -117,11 +117,11 @@ impl eframe::App for App {
             }
             Ok(KeyResult::MoveAndClick { position }) => {
                 self.move_mouse_to(position);
-                ctx.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
+                ui.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
                 self.should_click = true;
             }
             Ok(KeyResult::Click) => {
-                ctx.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
+                ui.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
                 self.should_click = true;
             }
             Ok(KeyResult::Move { direction, speed }) => {
@@ -145,7 +145,7 @@ impl eframe::App for App {
             }
         }
 
-        self.renderer.render(ctx);
+        self.renderer.render(ui);
     }
 
     fn clear_color(&self, _visuals: &egui::Visuals) -> [f32; 4] {

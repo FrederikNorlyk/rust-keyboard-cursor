@@ -1,4 +1,4 @@
-use egui::Pos2;
+use egui::{Pos2, Ui};
 
 pub enum KeyResult {
     Await,
@@ -28,9 +28,9 @@ pub enum Direction {
 }
 
 pub trait Renderer {
-    fn render(&mut self, ctx: &egui::Context);
+    fn render(&mut self, ui: &mut Ui);
 
     fn get_label_position(&self, label: String) -> Option<&Pos2>;
 
-    fn await_key(&mut self, ctx: &egui::Context) -> Result<KeyResult, String>;
+    fn await_key(&mut self, ui: &Ui) -> Result<KeyResult, String>;
 }
