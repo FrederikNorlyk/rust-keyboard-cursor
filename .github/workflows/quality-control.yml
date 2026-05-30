@@ -1,7 +1,6 @@
 name: Quality Control
 
 on:
-  push:
   pull_request:
 
 env:
