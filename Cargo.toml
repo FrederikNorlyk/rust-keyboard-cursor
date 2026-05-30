@@ -25,6 +25,6 @@ unsafe_code = "deny"
 unused = "deny"
 
 [dependencies]
-egui = "0.34.2"
-eframe = { version = "0.34.2", default-features = true }
+egui = "0.34.3"
+eframe = { version = "0.34.3", default-features = true }
 enigo = "0.6.1"

@@ -18,7 +18,7 @@ fn is_hyprland() -> bool {
 
     let xdg = std::env::var("XDG_CURRENT_DESKTOP");
 
-    xdg.map(|v| v.to_lowercase() == "hyprland").unwrap_or(false)
+    xdg.is_ok_and(|v| v.eq_ignore_ascii_case("hyprland"))
 }
 
 fn main() -> eframe::Result {
